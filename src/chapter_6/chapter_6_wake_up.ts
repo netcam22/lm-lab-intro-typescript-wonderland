@@ -1,5 +1,6 @@
-import { endAdventure, haveAdventures } from '../..';
-import { askQuestion, clear, print } from '../ui/console';
+import { endAdventure, haveAdventures } from "../..";
+import { goShopping } from "../chapter_7/chapter_7_go_shopping";
+import { askQuestion, clear, print } from "../ui/console";
 
 // ⚠️ This is a very unusual type setup. It's not a great idea in the real world
 // to nest so many properties with the exact same name.
@@ -7,46 +8,49 @@ import { askQuestion, clear, print } from '../ui/console';
 // so we've just got to find a way through it...
 
 interface WakeUp {
-	wake?: WakeUpFromDream;
+  wake?: WakeUpFromDream;
 }
 interface WakeUpFromDream {
-	wake?: WakeUpFromREMSleep;
+  wake?: WakeUpFromREMSleep;
 }
 interface WakeUpFromREMSleep {
-	wake?: WakeUpFromDeepSleep;
+  wake?: WakeUpFromDeepSleep;
 }
 interface WakeUpFromDeepSleep {
-	canWake?: string;
+  canWake?: string;
 }
 
 export function wakeUp(): void {
-	clear(true);
-	print('Wait... was this all a dream?');
+  clear(true);
+  print("Wait... was this all a dream?");
 
-	const awoken = tryToWakeUp();
+  const awoken = tryToWakeUp();
 
-	// optional parameters can be accessed safely with the ?. operator
-	// this will only return if every parameter in the whole chain is properly set...
-	if (awoken.wake?.wake?.wake?.canWake === 'Yes') {
-		print('You have awoken in your bed 🛏 What a lovely dream.');
-		print('Although...❓❓❓');
-		print('What are these tarts doing here?! 🥧🥧🥧🥧🥧🥧 🤔');
+  // optional parameters can be accessed safely with the ?. operator
+  // this will only return if every parameter in the whole chain is properly set...
+  if (awoken.wake?.wake?.wake?.canWake === "Yes") {
+    print("You have awoken in your bed 🛏 What a lovely dream.");
+    print("Although...❓❓❓");
+    print("What are these tarts doing here?! 🥧🥧🥧🥧🥧🥧 🤔");
 
-		print(
-			'✅ CONGRATULATIONS! You successfully made it through Wonderland! 🥳'
-		);
-
-		return askQuestion(
-			'Press ENTER to re-enter Wonderland! ',
-			haveAdventures
-		);
-	} else {
-		print('You are unable to wake up! 😱');
-		return endAdventure();
-	}
+    print(
+      "✅ CONGRATULATIONS! You successfully made it to the shopping area of Wonderland! 🥳"
+    );
+    return askQuestion("Press ENTER to continue! ", goShopping);
+  } else {
+    print("You are unable to wake up! 😱");
+    return endAdventure();
+  }
 }
 
 function tryToWakeUp(): WakeUp {
-	// 👉 FIXME ❌
-	return {};
+  return {
+    wake: {
+      wake: {
+        wake: {
+          canWake: "Yes"
+        }
+      }
+    }
+  };
 }
