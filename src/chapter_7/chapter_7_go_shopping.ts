@@ -15,7 +15,8 @@ const shoppingCart = (function () {
     set: (item: MarketProduce) => myShopping.products.push(item),
     get: (): Array<MarketProduce> => myShopping.products,
     getBag: (): string => myShopping.container,
-    getStall: (): string => myShopping.stall
+    getStall: (): string => myShopping.stall,
+    empty: () => (myShopping.products = [])
   };
 })();
 
@@ -36,15 +37,12 @@ function chooseProduce(): void {
 }
 
 function processChoice(input: string) {
-  if (input === undefined) {
-    print(`😮`);
-    print(`${input} is an invalid input 😭`);
-    return endAdventure();
-  }
-  const productChoice = parseProduceInput(input);
+  const productChoice =
+    input !== undefined ? parseProduceInput(input) : undefined;
   if (productChoice === undefined) {
-    print(`${input} is an invalid input 😭`);
-    return endAdventure();
+    clear(true);
+    print(`${input} is not valid 😮`);
+    return chooseProduce();
   }
   return pickUpProduce(productChoice);
 }
@@ -78,6 +76,7 @@ function pickUpProduce(productChoice: MarketProduce) {
 function checkBasket(produceString: string) {
   clear(true);
   if (shoppingCart.get().length === 2) {
+    shoppingCart.empty();
     print(
       `CONGRATULATIONS! You have bought ${produceString} for lunch in Wonderland!`
     );
