@@ -1,4 +1,4 @@
-import { endAdventure, haveAdventures } from "../..";
+import { haveAdventures } from "../..";
 import { askQuestion, clear, print } from "../ui/console";
 import { parseProduceInput } from "../ui/parse_produce_input";
 import { MarketProduce, PRODUCE } from "./chapter_7.types";
