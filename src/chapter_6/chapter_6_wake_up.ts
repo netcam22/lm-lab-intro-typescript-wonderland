@@ -1,5 +1,5 @@
 import { endAdventure, haveAdventures } from "../..";
-import { goShopping } from "../chapter_7/chapter_7_go_shopping";
+import { enterTheMarket } from "../chapter_7/chapter_7_go_shopping";
 import { askQuestion, clear, print } from "../ui/console";
 
 // ⚠️ This is a very unusual type setup. It's not a great idea in the real world
@@ -36,7 +36,7 @@ export function wakeUp(): void {
     print(
       "✅ CONGRATULATIONS! You successfully made it to the shopping area of Wonderland! 🥳"
     );
-    return askQuestion("Press ENTER to continue! ", goShopping);
+    return askQuestion("Press ENTER to continue! ", enterTheMarket);
   } else {
     print("You are unable to wake up! 😱");
     return endAdventure();

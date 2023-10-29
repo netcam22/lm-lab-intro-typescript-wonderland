@@ -1,41 +1,91 @@
 import { endAdventure, haveAdventures } from "../..";
 import { askQuestion, clear, print } from "../ui/console";
-
-const PRODUCE = [
-  "apples",
-  "bananas",
-  "oranges",
-  "cucumbers",
-  "tomatoes"
-] as const;
-type MarketProduce = (typeof PRODUCE)[number];
+import { parseProduceInput } from "../ui/parse_produce_input";
+import { MarketProduce, PRODUCE } from "./chapter_7.types";
 
 class ShoppingTrip {
-  container: string = "basket";
-  bought: MarketProduce = "apples";
+  container: string = "Basket";
+  stall: string = "Fruit and Veg";
+  products: Array<MarketProduce> = [];
 }
 
-export function goShopping(): void {
+const shoppingCart = (function () {
+  const myShopping = new ShoppingTrip();
+  return {
+    set: (item: MarketProduce) => myShopping.products.push(item),
+    get: (): Array<MarketProduce> => myShopping.products,
+    getBag: (): string => myShopping.container,
+    getStall: (): string => myShopping.stall
+  };
+})();
+
+export function enterTheMarket() {
+  clear(false);
+  print("Look at all of the fabulous fresh produce at the market:");
+  return chooseProduce();
+}
+
+function chooseProduce(): void {
+  print(PRODUCE.reduce((list, str, i) => `${list}  ${i}:${str}`, ""));
+  askQuestion(
+    `What${
+      shoppingCart.get().length > 0 ? " else " : " "
+    }are you going to buy for lunch? - select a number`,
+    processChoice
+  );
+}
+
+function processChoice(input: string) {
+  if (input === undefined) {
+    print(`😮`);
+    print(`${input} is an invalid input 😭`);
+    return endAdventure();
+  }
+  const productChoice = parseProduceInput(input);
+  if (productChoice === undefined) {
+    print(`${input} is an invalid input 😭`);
+    return endAdventure();
+  }
+  return pickUpProduce(productChoice);
+}
+
+function pickUpProduce(productChoice: MarketProduce) {
   clear(true);
 
-  const marketTrip = new ShoppingTrip();
+  const basketItems = shoppingCart.get();
 
-  marketTrip.container = "Basket";
-
-  print(
-    `You obviously have some ${marketTrip.bought} in your ${marketTrip.container}.`
-  );
-
-  if (marketTrip.bought === "apples") {
+  if (basketItems.includes(productChoice)) {
     print(
-      `CONGRATULATIONS! You successfully made it through the shopping stage of Wonderland and can have some ${marketTrip.bought} for lunch!`
+      `You have already bought some ${productChoice}, try buying something different for variety.`
     );
+    return chooseProduce();
+  } else {
+    const product = shoppingCart.set(productChoice);
+    print(
+      `You have bought some ${product} from the ${shoppingCart.getStall()} market stall.`
+    );
+    const produceString: string =
+      basketItems.length === 1
+        ? basketItems[0]
+        : `${basketItems[0]} and ${basketItems[1]}`;
+    print(
+      `You have some ${produceString} in your ${shoppingCart.getBag()} from the ${shoppingCart.getStall()} market stall.`
+    );
+    return checkBasket(produceString);
+  }
+}
 
-    return askQuestion("Press ENTER to re-enter Wonderland! ", haveAdventures);
+function checkBasket(produceString: string) {
+  clear(true);
+  if (shoppingCart.get().length === 2) {
+    print(
+      `CONGRATULATIONS! You have bought ${produceString} for lunch in Wonderland!`
+    );
+    return askQuestion("Press ENTER to continue! ", haveAdventures);
   } else {
     print(
-      "You have not completed your shopping trip and will not have any ingredients for lunch! 😱"
+      `You have bought some ${produceString} but need something else for lunch! 😱`
     );
-    return endAdventure();
+    return chooseProduce();
   }
 }
