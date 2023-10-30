@@ -29,7 +29,7 @@ export function enterTheMarket() {
 function chooseProduce(): void {
   print(
     PRODUCE.reduce(
-      (list, item, i) => `${list} ${item.name}: £${item.price.toFixed(2)}`,
+      (list, item, i) => `${list}  ${item.name}:£${item.price.toFixed(2)}`,
       ""
     )
   );
