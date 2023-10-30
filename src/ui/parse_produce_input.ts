@@ -1,14 +1,11 @@
 import {
-  MarketFruit,
+  MarketProduce,
   FRUIT,
-  MarketVegetables,
   VEGETABLES,
   PRODUCE
 } from "../chapter_7/chapter_7.types";
 
-export function parseProduceInput(
-  input: string
-): MarketFruit | MarketVegetables | undefined {
+export function parseProduceInput(input: string): MarketProduce | undefined {
   const chosenProduce = parseInt(input);
 
   if (isNaN(chosenProduce)) {
@@ -19,7 +16,7 @@ export function parseProduceInput(
     return undefined;
   }
 
-  if (chosenProduce > FRUIT.length) {
+  if (chosenProduce >= FRUIT.length) {
     return VEGETABLES[chosenProduce - FRUIT.length];
   }
 

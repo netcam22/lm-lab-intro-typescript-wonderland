@@ -1,26 +1,19 @@
 import { haveAdventures } from "../..";
 import { askQuestion, clear, print } from "../ui/console";
 import { parseProduceInput } from "../ui/parse_produce_input";
-import {
-  MarketFruit,
-  FRUIT,
-  MarketVegetables,
-  VEGETABLES,
-  PRODUCE
-} from "./chapter_7.types";
+import { FRUIT, VEGETABLES, PRODUCE, MarketProduce } from "./chapter_7.types";
 
 class ShoppingTrip {
-  container: string = "Basket";
-  stall: string = "Fruit and Veg";
-  products: Array<MarketFruit | MarketVegetables> = [];
+  container: string = "basket";
+  stall: string = "fruit and veg";
+  products: Array<MarketProduce> = [];
 }
 
 const shoppingCart = (function () {
   const myShopping = new ShoppingTrip();
   return {
-    set: (item: MarketFruit | MarketVegetables) =>
-      myShopping.products.push(item),
-    get: (): Array<MarketFruit | MarketVegetables> => myShopping.products,
+    set: (item: MarketProduce) => myShopping.products.push(item),
+    get: (): Array<MarketProduce> => myShopping.products,
     getBag: (): string => myShopping.container,
     getStall: (): string => myShopping.stall,
     empty: () => (myShopping.products = [])
@@ -34,7 +27,13 @@ export function enterTheMarket() {
 }
 
 function chooseProduce(): void {
-  print(PRODUCE.reduce((list, str, i) => `${list}  ${i}:${str}`, ""));
+  print(
+    PRODUCE.reduce(
+      (list, item, i) =>
+        `${list}  ${i}:${item.name}, £${item.price.toFixed(2)}`,
+      ""
+    )
+  );
   askQuestion(
     `What${
       shoppingCart.get().length > 0 ? " else " : " "
@@ -51,58 +50,68 @@ function processChoice(input: string | undefined) {
     print(`${input} not valid input 😮`);
     return chooseProduce();
   }
-  return pickUpProduce(productChoice);
+  return checkProduce(productChoice);
 }
 
-function pickUpProduce(productChoice: MarketFruit | MarketVegetables) {
+function hasProductType(basketItemName: string, productName: string) {
+  if (
+    (FRUIT.find(item => item.name === productName) &&
+      FRUIT.find(item => item.name === basketItemName)) ||
+    (VEGETABLES.find(item => item.name === productName) &&
+      VEGETABLES.find(item => item.name === basketItemName))
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function calculatePrice(basketItems: Array<MarketProduce>) {
+  const [a, b] = [...basketItems];
+  return `£${(a.price + b.price).toFixed(2)}`;
+}
+
+function checkProduce(productChoice: MarketProduce) {
   clear(true);
   const basketItems = shoppingCart.get();
 
-  const needType = FRUIT.find(
-    item => item === basketItems[0] && item === productChoice
-  )
-    ? "vegetables"
-    : VEGETABLES.find(item => item === basketItems[0] && item === productChoice)
-    ? "fruit"
-    : undefined;
-  /*
-  if (needType !== undefined) {
-    print(
-      `To make sure you eat a balanced diet, you also need some ${needType}!`
-    );
-    return chooseProduce();
+  if (basketItems.length === 1) {
+    const boughtItem = basketItems[0].name;
+
+    if (basketItems.includes(productChoice)) {
+      print(
+        `You have already bought some ${boughtItem}, try buying something different for variety.`
+      );
+      return chooseProduce();
+    } else if (hasProductType(boughtItem, productChoice.name)) {
+      print(
+        `You have already bought some ${boughtItem}, to eat a balanced diet, you need both fruit and vegetables!`
+      );
+      return chooseProduce();
+    }
   }
-  */
-  if (basketItems.includes(productChoice)) {
-    print(
-      `You have already bought some ${productChoice}, try buying something different for variety.${needType}`
-    );
-    return chooseProduce();
-  } else {
-    shoppingCart.set(productChoice);
-    print(
-      `You have some ${productChoice} in your ${shoppingCart.getBag()} from the ${shoppingCart.getStall()} market stall.`
-    );
-    return checkBasket(basketItems);
-  }
+  shoppingCart.set(productChoice);
+  print(
+    `You have some ${
+      productChoice.name
+    } in your ${shoppingCart.getBag()} from the ${shoppingCart.getStall()} market stall.`
+  );
+  return processBasket(basketItems);
 }
 
-function checkBasket(basketItems: Array<MarketFruit | MarketVegetables>) {
+function processBasket(basketItems: Array<MarketProduce>) {
   clear(true);
-  const produceString: string =
-    basketItems.length === 1
-      ? basketItems[0]
-      : `${basketItems[0]} and ${basketItems[1]}`;
 
   if (basketItems.length === 2) {
-    //shoppingCart.empty();
+    const produceString: string = `${basketItems[0].name} and ${basketItems[1].name}`;
+    const totalPrice = calculatePrice(basketItems);
+    shoppingCart.empty();
     print(
-      `CONGRATULATIONS! You have bought ${produceString} for lunch in Wonderland!`
+      `ENJOY YOUR LUNCH! You have bought ${produceString} from Wonderland market for ${totalPrice}.`
     );
     return askQuestion("Press ENTER to continue! ", haveAdventures);
   } else {
     print(
-      `You have bought some ${produceString} but need something else for lunch! 😱`
+      `You have bought some ${basketItems[0].name} but need something else for lunch! 😱`
     );
     return chooseProduce();
   }
