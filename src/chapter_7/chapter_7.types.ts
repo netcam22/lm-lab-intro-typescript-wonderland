@@ -18,6 +18,4 @@ export const VEGETABLES = [
 
 export type MarketVegetables = (typeof VEGETABLES)[number];
 
-export type MarketProduce = (MarketFruit | MarketVegetables)[number];
-
 export const PRODUCE = [...FRUIT, ...VEGETABLES];

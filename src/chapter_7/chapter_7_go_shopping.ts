@@ -6,21 +6,21 @@ import {
   FRUIT,
   MarketVegetables,
   VEGETABLES,
-  MarketProduce,
   PRODUCE
 } from "./chapter_7.types";
 
 class ShoppingTrip {
   container: string = "Basket";
   stall: string = "Fruit and Veg";
-  products: Array<MarketProduce> = [];
+  products: Array<MarketFruit | MarketVegetables> = [];
 }
 
 const shoppingCart = (function () {
   const myShopping = new ShoppingTrip();
   return {
-    set: (item: MarketProduce) => myShopping.products.push(item),
-    get: (): Array<MarketProduce> => myShopping.products,
+    set: (item: MarketFruit | MarketVegetables) =>
+      myShopping.products.push(item),
+    get: (): Array<MarketFruit | MarketVegetables> => myShopping.products,
     getBag: (): string => myShopping.container,
     getStall: (): string => myShopping.stall,
     empty: () => (myShopping.products = [])
@@ -54,36 +54,48 @@ function processChoice(input: string | undefined) {
   return pickUpProduce(productChoice);
 }
 
-function pickUpProduce(productChoice: MarketProduce) {
+function pickUpProduce(productChoice: MarketFruit | MarketVegetables) {
   clear(true);
-
   const basketItems = shoppingCart.get();
 
+  const needType = FRUIT.find(
+    item => item === basketItems[0] && item === productChoice
+  )
+    ? "vegetables"
+    : VEGETABLES.find(item => item === basketItems[0] && item === productChoice)
+    ? "fruit"
+    : undefined;
+  /*
+  if (needType !== undefined) {
+    print(
+      `To make sure you eat a balanced diet, you also need some ${needType}!`
+    );
+    return chooseProduce();
+  }
+  */
   if (basketItems.includes(productChoice)) {
     print(
-      `You have already bought some ${productChoice}, try buying something different for variety.`
+      `You have already bought some ${productChoice}, try buying something different for variety.${needType}`
     );
     return chooseProduce();
   } else {
     shoppingCart.set(productChoice);
     print(
-      `You have bought some ${productChoice} from the ${shoppingCart.getStall()} market stall.`
+      `You have some ${productChoice} in your ${shoppingCart.getBag()} from the ${shoppingCart.getStall()} market stall.`
     );
-    const produceString: string =
-      basketItems.length === 1
-        ? basketItems[0]
-        : `${basketItems[0]} and ${basketItems[1]}`;
-    print(
-      `You have some ${produceString} in your ${shoppingCart.getBag()} from the ${shoppingCart.getStall()} market stall.`
-    );
-    return checkBasket(produceString);
+    return checkBasket(basketItems);
   }
 }
 
-function checkBasket(produceString: string) {
+function checkBasket(basketItems: Array<MarketFruit | MarketVegetables>) {
   clear(true);
-  if (shoppingCart.get().length === 2) {
-    shoppingCart.empty();
+  const produceString: string =
+    basketItems.length === 1
+      ? basketItems[0]
+      : `${basketItems[0]} and ${basketItems[1]}`;
+
+  if (basketItems.length === 2) {
+    //shoppingCart.empty();
     print(
       `CONGRATULATIONS! You have bought ${produceString} for lunch in Wonderland!`
     );

@@ -1,6 +1,14 @@
-import { MarketProduce, PRODUCE } from "../chapter_7/chapter_7.types";
+import {
+  MarketFruit,
+  FRUIT,
+  MarketVegetables,
+  VEGETABLES,
+  PRODUCE
+} from "../chapter_7/chapter_7.types";
 
-export function parseProduceInput(input: string): MarketProduce | undefined {
+export function parseProduceInput(
+  input: string
+): MarketFruit | MarketVegetables | undefined {
   const chosenProduce = parseInt(input);
 
   if (isNaN(chosenProduce)) {
@@ -11,6 +19,9 @@ export function parseProduceInput(input: string): MarketProduce | undefined {
     return undefined;
   }
 
-  // we know the input is valid so we can return a Hole
-  return PRODUCE[chosenProduce];
+  if (chosenProduce > FRUIT.length) {
+    return VEGETABLES[chosenProduce - FRUIT.length];
+  }
+
+  return FRUIT[chosenProduce];
 }
