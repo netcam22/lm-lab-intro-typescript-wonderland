@@ -1,7 +1,14 @@
 import { haveAdventures } from "../..";
 import { askQuestion, clear, print } from "../ui/console";
 import { parseProduceInput } from "../ui/parse_produce_input";
-import { MarketProduce, PRODUCE } from "./chapter_7.types";
+import {
+  MarketFruit,
+  FRUIT,
+  MarketVegetables,
+  VEGETABLES,
+  MarketProduce,
+  PRODUCE
+} from "./chapter_7.types";
 
 class ShoppingTrip {
   container: string = "Basket";
@@ -36,12 +43,12 @@ function chooseProduce(): void {
   );
 }
 
-function processChoice(input: string) {
+function processChoice(input: string | undefined) {
   const productChoice =
     input !== undefined ? parseProduceInput(input) : undefined;
   if (productChoice === undefined) {
     clear(true);
-    print(`${input} is not valid 😮`);
+    print(`${input} not valid input 😮`);
     return chooseProduce();
   }
   return pickUpProduce(productChoice);
@@ -58,9 +65,9 @@ function pickUpProduce(productChoice: MarketProduce) {
     );
     return chooseProduce();
   } else {
-    const product = shoppingCart.set(productChoice);
+    shoppingCart.set(productChoice);
     print(
-      `You have bought some ${product} from the ${shoppingCart.getStall()} market stall.`
+      `You have bought some ${productChoice} from the ${shoppingCart.getStall()} market stall.`
     );
     const produceString: string =
       basketItems.length === 1
