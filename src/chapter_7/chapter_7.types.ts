@@ -9,11 +9,11 @@ export const FRUIT = [
 export type MarketFruit = (typeof FRUIT)[number];
 
 export const VEGETABLES = [
-  { name: "brocolli", price: 1.5 },
-  { name: "carrots", price: 1.0 },
-  { name: "potatoes", price: 1.7 },
-  { name: "beans", price: 2.5 },
-  { name: "cauliflower", price: 1.8 }
+  { name: "brocolli", price: 1.1 },
+  { name: "carrots", price: 0.7 },
+  { name: "potatoes", price: 1.6 },
+  { name: "beans", price: 2.1 },
+  { name: "cauliflower", price: 1.9 }
 ] as const;
 
 export type MarketVegetables = (typeof VEGETABLES)[number];

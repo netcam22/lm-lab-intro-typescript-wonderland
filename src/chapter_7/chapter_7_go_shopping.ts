@@ -29,15 +29,14 @@ export function enterTheMarket() {
 function chooseProduce(): void {
   print(
     PRODUCE.reduce(
-      (list, item, i) =>
-        `${list}  ${i}:${item.name}, £${item.price.toFixed(2)}`,
+      (list, item, i) => `${list} ${item.name}: £${item.price.toFixed(2)}`,
       ""
     )
   );
   askQuestion(
     `What${
       shoppingCart.get().length > 0 ? " else " : " "
-    }are you going to buy for lunch? - select a number`,
+    }are you going to buy for lunch?`,
     processChoice
   );
 }

@@ -6,7 +6,7 @@ import {
 } from "../chapter_7/chapter_7.types";
 
 export function parseProduceInput(input: string): MarketProduce | undefined {
-  const chosenProduce = parseInt(input);
+  const chosenProduce = PRODUCE.findIndex(object => object.name === input);
 
   if (isNaN(chosenProduce)) {
     return undefined;
